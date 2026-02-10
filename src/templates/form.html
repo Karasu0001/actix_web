@@ -5,7 +5,6 @@
   <title>Únete al Club de Lectores</title>
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   <style>
-    /* ... (tus estilos se mantienen igual) ... */
     body { font-family: 'Georgia', serif; background-color: #fcfaf7; color: #333; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
     .form-card { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2d1c3; width: 100%; max-width: 400px; }
     h2 { text-align: center; color: #2c1810; border-bottom: 1px solid #e2d1c3; padding-bottom: 15px; }
@@ -15,88 +14,39 @@
     .actions { display: flex; flex-direction: column; gap: 10px; }
     button { width: 100%; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-family: 'Georgia', serif; font-size: 1rem; transition: 0.3s; }
     button[type="submit"] { background-color: #4a3728; color: white; }
-    button[type="submit"]:hover { background-color: #634a35; }
     .btn-back { background-color: transparent; color: #8b5e3c; text-decoration: underline; font-size: 0.85rem; }
-    .g-recaptcha { margin-bottom: 20px; }
   </style>
 </head>
 <body>
-
 <div class="form-card">
   <h2>Club de Lectores</h2>
-
   <form id="formRegistro" action="/crear_usuario" method="post" onsubmit="return validarFormulario();">
     <label for="usuario">Nombre de Usuario (4-15 caracteres)</label>
-    <input type="text" id="usuario" name="usuario" 
-           minlength="4" maxlength="15" required 
-           placeholder="Ej: LectorElegante">
-
+    <input type="text" id="usuario" name="usuario" minlength="4" maxlength="15" required>
     <label for="email">Correo Electrónico</label>
-    <input type="email" id="email" name="email" maxlength="100" required>
-
+    <input type="email" id="email" name="email" required>
     <label for="pass1">Contraseña (Mín. 8 caracteres)</label>
-    <input type="password" id="pass1" name="password" 
-           minlength="8" maxlength="50" required>
-
+    <input type="password" id="pass1" name="password" minlength="8" required>
     <label for="pass2">Confirmar Contraseña</label>
-    <input type="password" id="pass2" maxlength="50" required>
-
+    <input type="password" id="pass2" required>
     <div class="g-recaptcha" data-sitekey="6Lcr9WUsAAAAAC2pV7Uwh6FTjY1BvMDo4NYP9fx0"></div>
-
     <div class="actions">
       <button type="submit">Crear Cuenta</button>
-      <button type="button" class="btn-back" onclick="location.href='/pantalla1'"></button>
+      <button type="button" class="btn-back" onclick="location.href='/p1'">Volver al inicio</button>
     </div>
   </form>
 </div>
-
 <script>
 function validarFormulario() {
   const u = document.getElementById("usuario").value.trim();
   const p1 = document.getElementById("pass1").value;
   const p2 = document.getElementById("pass2").value;
-  const email = document.getElementById("email").value;
-
-  // 1. Validar longitud y caracteres del usuario (Seguridad contra inyección simple)
-  // Solo letras, números y guiones bajos, entre 4 y 15 caracteres
-  const userRegex = /^[a-zA-Z0-9_]{4,15}$/;
-  if (!userRegex.test(u)) {
-    alert("Usuario inválido: Debe tener entre 4 y 15 caracteres (solo letras, números y '_')");
-    return false;
-  }
-
-  // 2. Validar complejidad de contraseña (Seguridad de cuenta)
-  // Al menos una mayúscula, una minúscula y un número
-  const passRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-  if (!passRegex.test(p1)) {
-    alert("La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.");
-    return false;
-  }
-
-  // 3. Coincidencia de contraseñas
-  if (p1 !== p2) {
-    alert("Las contraseñas no coinciden");
-    return false;
-  }
-
-  // 4. Sanitización básica de campos (prevenir scripts maliciosos básicos)
-  if (u.includes("<") || u.includes(">") || email.includes("<")) {
-    alert("Caracteres no permitidos detectados.");
-    return false;
-  }
-
-  // 5. Validación de reCAPTCHA
-  if (typeof grecaptcha !== 'undefined') {
-    let captcha = grecaptcha.getResponse();
-    if (captcha.length === 0) {
-      alert("Por favor verifica que no eres un robot.");
-      return false;
-    }
-  }
-
+  if (!/^[a-zA-Z0-9_]{4,15}$/.test(u)) { alert("Usuario inválido"); return false; }
+  if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(p1)) { alert("Contraseña débil"); return false; }
+  if (p1 !== p2) { alert("Las contraseñas no coinciden"); return false; }
+  if (grecaptcha.getResponse().length === 0) { alert("Verifica el captcha"); return false; }
   return true;
 }
 </script>
-
 </body>
 </html>
