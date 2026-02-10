@@ -28,16 +28,50 @@
       transition: color 0.3s;
     }
 
-    nav a:hover {
-      color: #c04000;
-    }
-
     h1 {
       font-size: 2.5rem;
       color: #2c1810;
       border-bottom: 2px solid #e2d1c3;
       padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    /* Nuevo estilo para el menú de libros */
+    .book-menu {
+      width: 100%;
+      max-width: 600px;
       margin-bottom: 40px;
+      border: 1px solid #e2d1c3;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .book-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid #f0e6db;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.2s;
+      cursor: pointer;
+    }
+
+    .book-item:last-child { border-bottom: none; }
+
+    .book-item:hover {
+      background-color: #fffaf0;
+    }
+
+    .book-title {
+      font-weight: bold;
+      color: #4a3728;
+    }
+
+    .book-author {
+      font-size: 0.85rem;
+      color: #8b5e3c;
+      font-style: italic;
     }
 
     .container-buttons {
@@ -46,7 +80,7 @@
     }
 
     button {
-      background-color: #4a3728; /* Tono café oscuro */
+      background-color: #4a3728;
       color: white;
       border: none;
       padding: 12px 25px;
@@ -60,17 +94,11 @@
     button:hover {
       background-color: #634a35;
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
     }
 
-    /* Estilo específico para el botón de regreso */
     .btn-secondary {
       background-color: #e2d1c3;
       color: #4a3728;
-    }
-
-    .btn-secondary:hover {
-      background-color: #d4bcab;
     }
   </style>
 </head>
@@ -84,13 +112,35 @@
 
   <h1>Catálogo de Novedades</h1>
 
+  <div class="book-menu">
+    <div class="book-item" onclick="location.href='/pantalla3'">
+      <div>
+        <div class="book-title">El Misterio de la Antigua Biblioteca</div>
+        <div class="book-author">J.R. Escritor</div>
+      </div>
+      <span>→</span>
+    </div>
+
+    <div class="book-item" onclick="location.href='/pantalla3'">
+      <div>
+        <div class="book-title">Crónicas del Tiempo de Papel</div>
+        <div class="book-author">Elena Verso</div>
+      </div>
+      <span>→</span>
+    </div>
+
+    <div class="book-item" onclick="location.href='/pantalla3'">
+      <div>
+        <div class="book-title">La Sombra del Tintero</div>
+        <div class="book-author">Marco Tintero</div>
+      </div>
+      <span>→</span>
+    </div>
+  </div>
+
   <div class="container-buttons">
     <button class="btn-secondary" onclick="location.href='/pantalla1'">
       « Volver a Géneros
-    </button>
-    
-    <button onclick="location.href='/pantalla3'">
-      Ver Detalles del Libro »
     </button>
   </div>
 

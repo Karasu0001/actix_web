@@ -1,38 +1,81 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>
-            Por el momento no se puede acceder a este apartado,intente de nuevo mas tarde
-        </title>
-        <style>
-            body{
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: brown;
-                color: burlywood;
-                margin: 0%;
-                padding: 40px;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-             
-            nav{
-                font-size: 0.9rem;
-                color:bisque;
-                margin-bottom: 30px;
-                width: 100;
-                max-width: 600px;
-            }
+<head>
+    <meta charset="UTF-8">
+    <title>404 - Página no encontrada | Librería Ateneo</title>
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #2c1810; /* Un café muy oscuro, elegante */
+            color: #e2d1c3; /* Tono crema para contraste */
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 80vh;
+            text-align: center;
+        }
+        
+        .error-code {
+            font-size: 8rem;
+            margin: 0;
+            opacity: 0.2;
+            position: absolute;
+            z-index: -1;
+        }
 
-        </style>
-    </head>
-    <body>
-        <nav>
-<a> href="matenimiento"</a> 
-        </nav>
-        <h1>
-            Pagina en Mantenimiento
-        </h1>
-    </body>
+        .container {
+            max-width: 600px;
+            border: 1px solid #4a3728;
+            padding: 40px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .btn-home {
+            background-color: #8b5e3c;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            transition: background 0.3s;
+            display: inline-block;
+        }
+
+        .btn-home:hover {
+            background-color: #a6734d;
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="error-code">404</div>
+
+    <div class="container">
+        <div class="icon">📖</div>
+        <h1>Capítulo no encontrado</h1>
+        <p>Parece que la página que buscas ha sido arrancada de nuestra colección o nunca fue escrita.</p>
+        
+        <a href="/" class="btn-home">Volver a la Biblioteca</a>
+    </div>
+
+</body>
 </html>
