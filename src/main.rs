@@ -68,8 +68,8 @@ async fn crear_usuario(pool: web::Data<PgPool>, form: web::Form<UsuarioForm>) ->
                 .finish()
         }
         Err(e) => {
-            eprintln!("❌ Error al insertar: {:?}", e);
-            HttpResponse::InternalServerError().body("Error al registrar usuario")
+            eprintln!(" Error al insertar: {:?}", e);
+            HttpResponse::InternalServerError().body("Error al registrar,el usuario ya existe")
         }
     }
 }
@@ -80,13 +80,13 @@ async fn crear_usuario(pool: web::Data<PgPool>, form: web::Form<UsuarioForm>) ->
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
-    let database_url = env::var("DATABASE_URL").expect("❌ DATABASE_URL no definida");
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL no definida");
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
         .await
-        .expect("❌ Error conectando a la base de datos");
+        .expect(" Error conectando a la base de datos");
 
     let port: u16 = env::var("PORT")
         .unwrap_or_else(|_| "8080".to_string())
