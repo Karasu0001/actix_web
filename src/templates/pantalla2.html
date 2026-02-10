@@ -1,22 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Pantalla 2</title>
+  <meta charset="UTF-8">
+  <title>Explorar Colección | Librería Ateneo</title>
+  <style>
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #fcfaf7;
+      color: #333;
+      line-height: 1.6;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    nav {
+      font-size: 0.9rem;
+      color: #8b5e3c;
+      margin-bottom: 30px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #8b5e3c;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #c04000;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #2c1810;
+      border-bottom: 2px solid #e2d1c3;
+      padding-bottom: 10px;
+      margin-bottom: 40px;
+    }
+
+    .container-buttons {
+      display: flex;
+      gap: 20px;
+    }
+
+    button {
+      background-color: #4a3728; /* Tono café oscuro */
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    button:hover {
+      background-color: #634a35;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    /* Estilo específico para el botón de regreso */
+    .btn-secondary {
+      background-color: #e2d1c3;
+      color: #4a3728;
+    }
+
+    .btn-secondary:hover {
+      background-color: #d4bcab;
+    }
+  </style>
 </head>
 <body>
+
   <nav>
-    <a href="/">Inicio</a> >
-    <a href="/p1">Pantalla 1</a> >
-    Pantalla 2
+    <a href="/">Biblioteca</a> &nbsp;>&nbsp; 
+    <a href="/p1">Géneros</a> &nbsp;>&nbsp; 
+    Ficción Contemporánea
   </nav>
 
-  <h1>Pantalla 2</h1>
+  <h1>Catálogo de Novedades</h1>
 
-  <button onclick="location.href='/pantalla3'">
-    Ir a Pantalla 3
-  </button>
-  <button onclick="location.href='/pantalla1'">
-    Ir a pantalla2
+  <div class="container-buttons">
+    <button class="btn-secondary" onclick="location.href='/pantalla1'">
+      « Volver a Géneros
     </button>
+    
+    <button onclick="location.href='/pantalla3'">
+      Ver Detalles del Libro »
+    </button>
+  </div>
+
 </body>
 </html>
