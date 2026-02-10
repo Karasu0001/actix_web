@@ -1,8 +1,8 @@
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
-use sqlx::{PgPool, postgres::PgPoolOptions};
 use dotenvy::dotenv;
-use std::env;
 use serde::Deserialize;
+use sqlx::{postgres::PgPoolOptions, PgPool};
+use std::env;
 
 #[derive(Deserialize)]
 struct UsuarioForm {
@@ -11,18 +11,18 @@ struct UsuarioForm {
     password: String,
 }
 
-// ============ VISTAS ============
-
-async fn inicio() -> impl Responder {
-    HttpResponse::Ok()
-        .content_type("text/html")
-        .body(include_str!("templates/form.html"))
-}
+// ================== VISTAS ==================
 
 async fn pantalla1() -> impl Responder {
     HttpResponse::Ok()
         .content_type("text/html")
         .body(include_str!("templates/pantalla1.html"))
+}
+
+async fn mantenimiento() -> impl Responder {
+    HttpResponse::Ok()
+        .content_type("text/html")
+        .body(include_str!("templates/mantenimiento.html"))
 }
 
 async fn pantalla2() -> impl Responder {
@@ -37,20 +37,22 @@ async fn pantalla3() -> impl Responder {
         .body(include_str!("templates/pantalla3.html"))
 }
 
-// ============ INSERTAR USUARIO ============
+async fn pagina_404() -> impl Responder {
+    HttpResponse::NotFound()
+        .content_type("text/html")
+        .body(include_str!("templates/404.html"))
+}
 
-async fn crear_usuario(
-    pool: web::Data<PgPool>,
-    form: web::Form<UsuarioForm>,
-) -> impl Responder {
+// ================== INSERTAR USUARIO ==================
 
+async fn crear_usuario(pool: web::Data<PgPool>, form: web::Form<UsuarioForm>) -> impl Responder {
     println!("▶ Recibiendo datos: {} | {}", form.usuario, form.email);
 
     let resultado = sqlx::query(
         r#"
         INSERT INTO usuarios (usuario, email, password)
         VALUES ($1, $2, $3)
-        "#
+        "#,
     )
     .bind(&form.usuario)
     .bind(&form.email)
@@ -59,7 +61,12 @@ async fn crear_usuario(
     .await;
 
     match resultado {
-        Ok(_) => HttpResponse::Ok().body("Usuario registrado correctamente"),
+        Ok(_) => {
+            // ✅ Redirección real (lo que te faltaba)
+            HttpResponse::Found()
+                .append_header(("Location", "/pantalla1"))
+                .finish()
+        }
         Err(e) => {
             eprintln!("❌ Error al insertar: {:?}", e);
             HttpResponse::InternalServerError().body("Error al registrar usuario")
@@ -67,14 +74,13 @@ async fn crear_usuario(
     }
 }
 
-// ============ MAIN ============
+// ================== MAIN ==================
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
-    let database_url =
-        env::var("DATABASE_URL").expect("❌ DATABASE_URL no definida");
+    let database_url = env::var("DATABASE_URL").expect("❌ DATABASE_URL no definida");
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
@@ -92,11 +98,21 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .route("/", web::get().to(inicio))
+
+            // Inicio real
+            .route("/", web::get().to(pantalla1))
+
+            // Rutas coherentes con tu HTML
             .route("/pantalla1", web::get().to(pantalla1))
+            .route("/mantenimiento", web::get().to(mantenimiento))
             .route("/pantalla2", web::get().to(pantalla2))
             .route("/pantalla3", web::get().to(pantalla3))
+
+            // POST
             .route("/crear_usuario", web::post().to(crear_usuario))
+
+            // 404 personalizado
+            .default_service(web::route().to(pagina_404))
     })
     .bind(("0.0.0.0", port))?
     .run()
