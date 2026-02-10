@@ -62,7 +62,7 @@ async fn crear_usuario(pool: web::Data<PgPool>, form: web::Form<UsuarioForm>) ->
 
     match resultado {
         Ok(_) => {
-            // ✅ Redirección a pantalla1 al registrarse
+            // Redirección a pantalla1 al registrarse
             HttpResponse::Found()
                 .append_header(("Location", "/pantalla1"))
                 .finish()
@@ -99,7 +99,6 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(pool.clone()))
 
-            // ✅ AHORA el inicio real es el formulario
             .route("/", web::get().to(mantenimiento))
 
             // Rutas normales
