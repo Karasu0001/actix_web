@@ -48,11 +48,12 @@
     input {
       width: 100%;
       padding: 10px;
-      margin-bottom: 18px;
+      margin-bottom: 6px;
       border: 1px solid #d1bfa7;
       border-radius: 4px;
       box-sizing: border-box;
       background-color: #fffaf5;
+      transition: 0.2s;
     }
 
     input:focus {
@@ -60,6 +61,28 @@
       background-color: #fff;
       outline: none;
     }
+
+    /* Estados */
+    .ok {
+      border-color: #2e7d32 !important;
+      background-color: #f2fbf3 !important;
+    }
+
+    .bad {
+      border-color: #c62828 !important;
+      background-color: #fff3f3 !important;
+    }
+
+    .msg {
+      font-size: 0.82rem;
+      margin: 0 0 14px 0;
+      min-height: 18px;
+      line-height: 1.2rem;
+      color: #6b5b53;
+    }
+
+    .msg.ok { color: #2e7d32; }
+    .msg.bad { color: #c62828; }
 
     .actions {
       display: flex;
@@ -88,6 +111,11 @@
       background-color: #3a2b1f;
     }
 
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     .btn-go {
       background-color: transparent;
       color: #8b5e3c;
@@ -101,26 +129,30 @@
   <div class="form-card">
     <h2>Club de Lectores</h2>
 
-    <form id="formRegistro" action="/crear_usuario" method="post" onsubmit="return validarFormulario();">
+    <form id="formRegistro" action="/crear_usuario" method="post">
 
       <label for="usuario">Nombre de Usuario (4-15 caracteres)</label>
       <input type="text" id="usuario" name="usuario" minlength="4" maxlength="15" required>
+      <div id="msgUsuario" class="msg"></div>
 
       <label for="email">Correo Electrónico</label>
       <input type="email" id="email" name="email" required>
+      <div id="msgEmail" class="msg"></div>
 
-      <label for="pass1">Contraseña (Mín. 8 caracteres)</label>
+      <label for="pass1">Contraseña (mínimo 8, 1 mayúscula, 1 minúscula, 1 número)</label>
       <input type="password" id="pass1" name="password" minlength="8" required>
+      <div id="msgPass1" class="msg"></div>
 
       <label for="pass2">Confirmar Contraseña</label>
       <input type="password" id="pass2" required>
+      <div id="msgPass2" class="msg"></div>
 
       <div class="g-recaptcha" data-sitekey="6Lcr9WUsAAAAAC2pV7Uwh6FTjY1BvMDo4NYP9fx0"></div>
+      <div id="msgCaptcha" class="msg"></div>
 
       <div class="actions">
-        <button type="submit">Crear Cuenta</button>
+        <button id="btnSubmit" type="submit" disabled>Crear Cuenta</button>
 
-   
         <button type="button" class="btn-go" onclick="location.href='/pantalla1'">
           Ir al Menú Principal
         </button>
@@ -130,33 +162,154 @@
   </div>
 
   <script>
-    function validarFormulario() {
-      const u = document.getElementById("usuario").value.trim();
-      const p1 = document.getElementById("pass1").value;
-      const p2 = document.getElementById("pass2").value;
+    const form = document.getElementById("formRegistro");
+    const btnSubmit = document.getElementById("btnSubmit");
 
-      if (!/^[a-zA-Z0-9_]{4,15}$/.test(u)) {
-        alert("Usuario inválido");
+    const usuario = document.getElementById("usuario");
+    const email = document.getElementById("email");
+    const pass1 = document.getElementById("pass1");
+    const pass2 = document.getElementById("pass2");
+
+    const msgUsuario = document.getElementById("msgUsuario");
+    const msgEmail = document.getElementById("msgEmail");
+    const msgPass1 = document.getElementById("msgPass1");
+    const msgPass2 = document.getElementById("msgPass2");
+    const msgCaptcha = document.getElementById("msgCaptcha");
+
+    const reUsuario = /^[a-zA-Z0-9_]{4,15}$/;
+    const rePassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+
+    function setState(input, msgEl, ok, message) {
+      input.classList.remove("ok", "bad");
+      msgEl.classList.remove("ok", "bad");
+
+      if (ok === null) {
+        msgEl.textContent = message || "";
+        return;
+      }
+
+      input.classList.add(ok ? "ok" : "bad");
+      msgEl.classList.add(ok ? "ok" : "bad");
+      msgEl.textContent = message;
+    }
+
+    function validarUsuario() {
+      const u = usuario.value.trim();
+
+      if (u.length === 0) {
+        setState(usuario, msgUsuario, null, "");
         return false;
       }
 
-      if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/.test(p1)) {
-        alert("Contraseña débil");
+      if (!reUsuario.test(u)) {
+        setState(usuario, msgUsuario, false, "Solo letras, números y guión bajo. (4-15)");
+        return false;
+      }
+
+      setState(usuario, msgUsuario, true, "Usuario válido.");
+      return true;
+    }
+
+    function validarEmail() {
+      const e = email.value.trim();
+
+      if (e.length === 0) {
+        setState(email, msgEmail, null, "");
+        return false;
+      }
+
+      if (!e.includes("@") || !e.includes(".")) {
+        setState(email, msgEmail, false, "Correo inválido.");
+        return false;
+      }
+
+      setState(email, msgEmail, true, "Correo válido.");
+      return true;
+    }
+
+    function validarPass1() {
+      const p = pass1.value;
+
+      if (p.length === 0) {
+        setState(pass1, msgPass1, null, "");
+        return false;
+      }
+
+      if (!rePassword.test(p)) {
+        setState(pass1, msgPass1, false, "Debe tener 8+, mayúscula, minúscula y número.");
+        return false;
+      }
+
+      setState(pass1, msgPass1, true, "Contraseña fuerte.");
+      return true;
+    }
+
+    function validarPass2() {
+      const p1 = pass1.value;
+      const p2 = pass2.value;
+
+      if (p2.length === 0) {
+        setState(pass2, msgPass2, null, "");
         return false;
       }
 
       if (p1 !== p2) {
-        alert("Las contraseñas no coinciden");
+        setState(pass2, msgPass2, false, "Las contraseñas no coinciden.");
         return false;
       }
 
-      if (grecaptcha.getResponse().length === 0) {
-        alert("Verifica el captcha");
+      if (!validarPass1()) {
+        setState(pass2, msgPass2, false, "Primero completa una contraseña válida.");
         return false;
       }
 
+      setState(pass2, msgPass2, true, "Contraseñas coinciden.");
       return true;
     }
+
+    function validarCaptcha() {
+      const ok = grecaptcha.getResponse().length > 0;
+
+      msgCaptcha.classList.remove("ok", "bad");
+
+      if (!ok) {
+        msgCaptcha.classList.add("bad");
+        msgCaptcha.textContent = "Falta verificar el captcha.";
+        return false;
+      }
+
+      msgCaptcha.classList.add("ok");
+      msgCaptcha.textContent = "Captcha verificado.";
+      return true;
+    }
+
+    function validarTodo() {
+      const okU = validarUsuario();
+      const okE = validarEmail();
+      const okP1 = validarPass1();
+      const okP2 = validarPass2();
+      const okCap = validarCaptcha();
+
+      const ok = okU && okE && okP1 && okP2 && okCap;
+      btnSubmit.disabled = !ok;
+      return ok;
+    }
+
+    // Validación
+    usuario.addEventListener("input", () => { validarUsuario(); validarTodo(); });
+    email.addEventListener("input", () => { validarEmail(); validarTodo(); });
+    pass1.addEventListener("input", () => { validarPass1(); validarPass2(); validarTodo(); });
+    pass2.addEventListener("input", () => { validarPass2(); validarTodo(); });
+
+    // Captcha
+    setInterval(validarTodo, 800);
+
+  
+    form.addEventListener("submit", (e) => {
+      if (!validarTodo()) {
+        e.preventDefault();
+      }
+    });
   </script>
 </body>
 </html>
